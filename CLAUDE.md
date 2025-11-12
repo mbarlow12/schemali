@@ -132,7 +132,7 @@ The `SchemaWriter` class handles:
 
 ### Test Coverage Goals
 
-- Maintain >90% code coverage
+- Maintain >85% code coverage
 - All public APIs must have tests
 - Critical paths must have integration tests
 

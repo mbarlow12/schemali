@@ -1,0 +1,56 @@
+name: 'Setup Project with uv'
+description: 'Install uv and set up Python project with dependencies'
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.11'
+  extras:
+    description: 'Comma-separated list of optional dependency groups to install (e.g., "dev", "docs", "dev,docs")'
+    required: false
+    default: 'dev'
+  cache-key:
+    description: 'Custom cache key suffix'
+    required: false
+    default: 'default'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+
+    - name: Cache uv dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/uv
+          .venv
+        key: uv-${{ runner.os }}-py${{ inputs.python-version }}-${{ inputs.extras }}-${{ inputs.cache-key }}-${{ hashFiles('**/pyproject.toml', '**/uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-py${{ inputs.python-version }}-${{ inputs.extras }}-${{ inputs.cache-key }}-
+          uv-${{ runner.os }}-py${{ inputs.python-version }}-${{ inputs.extras }}-
+          uv-${{ runner.os }}-py${{ inputs.python-version }}-
+
+    - name: Create virtual environment
+      shell: bash
+      run: uv venv
+
+    - name: Install package with dependencies
+      shell: bash
+      run: |
+        extras="${{ inputs.extras }}"
+        if [ -z "$extras" ]; then
+          echo "Installing package without optional dependencies..."
+          uv pip install -e .
+        else
+          echo "Installing package with extras: $extras"
+          uv pip install -e ".[$extras]"
+        fi

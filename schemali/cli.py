@@ -1,6 +1,5 @@
 """Command-line interface for schemali using Typer."""
 
-import sys
 from pathlib import Path
 from typing import List, Optional
 
@@ -151,7 +150,9 @@ def main(
 
             console.print(table)
         else:
-            console.print(f"\n[bold green]✓ Complete![/bold green] Generated {total_models} schemas")
+            console.print(
+                f"\n[bold green]✓ Complete![/bold green] Generated {total_models} schemas"
+            )
 
     except KeyboardInterrupt:
         console.print("\n[yellow]Interrupted by user[/yellow]")

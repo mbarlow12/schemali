@@ -4,7 +4,6 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from pydantic import BaseModel, Field
 
 
 @pytest.fixture
@@ -61,13 +60,13 @@ class RegularClass:
 @pytest.fixture
 def config_file(temp_dir):
     """Create a sample configuration file."""
-    content = '''[tool.schemali]
+    content = """[tool.schemali]
 output_dir = "schemas"
 indent = 4
 verbose = false
 schema_suffix = ".schema.json"
 overwrite = true
-'''
+"""
 
     config_file = temp_dir / "schemali.toml"
     config_file.write_text(content)

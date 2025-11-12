@@ -71,19 +71,18 @@ class SchemaWriter:
         for name, obj in inspect.getmembers(module):
             # Check if it's a class, is a subclass of BaseModel,
             # and is not BaseModel itself
-            if (inspect.isclass(obj) and
-                issubclass(obj, BaseModel) and
-                obj is not BaseModel and
-                obj.__module__ == module.__name__):
+            if (
+                inspect.isclass(obj)
+                and issubclass(obj, BaseModel)
+                and obj is not BaseModel
+                and obj.__module__ == module.__name__
+            ):
                 models.append(obj)
 
         return models
 
     def write_schema(
-        self,
-        model: Type[BaseModel],
-        output_path: Path = None,
-        indent: int = 2
+        self, model: Type[BaseModel], output_path: Path = None, indent: int = 2
     ) -> Path:
         """
         Write a Pydantic model's JSON schema to a file.
@@ -104,16 +103,13 @@ class SchemaWriter:
         schema = model.model_json_schema()
 
         # Write to file
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(schema, f, indent=indent)
 
         return output_path
 
     def process_module(
-        self,
-        module_path: Path,
-        indent: int = 2,
-        verbose: bool = False
+        self, module_path: Path, indent: int = 2, verbose: bool = False
     ) -> Dict[str, Path]:
         """
         Process a Python module: load it, discover models, and write schemas.

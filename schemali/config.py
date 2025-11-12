@@ -27,33 +27,20 @@ class SchemaliConfig(BaseSettings):
 
     # Output configuration
     output_dir: Optional[Path] = Field(
-        default=None,
-        description="Default output directory for schema files"
+        default=None, description="Default output directory for schema files"
     )
 
-    indent: int = Field(
-        default=2,
-        ge=0,
-        le=8,
-        description="JSON indentation spaces"
-    )
+    indent: int = Field(default=2, ge=0, le=8, description="JSON indentation spaces")
 
     # Behavior configuration
-    verbose: bool = Field(
-        default=False,
-        description="Enable verbose output by default"
-    )
+    verbose: bool = Field(default=False, description="Enable verbose output by default")
 
     # File naming configuration
     schema_suffix: str = Field(
-        default=".schema.json",
-        description="Suffix for generated schema files"
+        default=".schema.json", description="Suffix for generated schema files"
     )
 
-    overwrite: bool = Field(
-        default=True,
-        description="Whether to overwrite existing schema files"
-    )
+    overwrite: bool = Field(default=True, description="Whether to overwrite existing schema files")
 
     @classmethod
     def load_config(cls, config_file: Optional[Path] = None) -> "SchemaliConfig":

@@ -1,8 +1,5 @@
 """Tests for CLI module."""
 
-from pathlib import Path
-
-import pytest
 from typer.testing import CliRunner
 
 from schemali.cli import app
@@ -32,10 +29,7 @@ class TestCLI:
 
     def test_process_single_module(self, sample_model_file, temp_dir):
         """Test processing a single module."""
-        result = runner.invoke(
-            app,
-            [str(sample_model_file), "-o", str(temp_dir)]
-        )
+        result = runner.invoke(app, [str(sample_model_file), "-o", str(temp_dir)])
 
         assert result.exit_code == 0
         assert "2 schema(s)" in result.stdout or "User" in result.stdout
@@ -46,20 +40,14 @@ class TestCLI:
 
     def test_process_with_verbose(self, sample_model_file, temp_dir):
         """Test processing with verbose output."""
-        result = runner.invoke(
-            app,
-            [str(sample_model_file), "-o", str(temp_dir), "-v"]
-        )
+        result = runner.invoke(app, [str(sample_model_file), "-o", str(temp_dir), "-v"])
 
         assert result.exit_code == 0
         assert "Processing module" in result.stdout
 
     def test_process_with_custom_indent(self, sample_model_file, temp_dir):
         """Test processing with custom indentation."""
-        result = runner.invoke(
-            app,
-            [str(sample_model_file), "-o", str(temp_dir), "--indent", "4"]
-        )
+        result = runner.invoke(app, [str(sample_model_file), "-o", str(temp_dir), "--indent", "4"])
 
         assert result.exit_code == 0
 
@@ -85,28 +73,25 @@ class TestCLI:
         """Test processing multiple modules."""
         # Create two model files
         file1 = temp_dir / "models1.py"
-        file1.write_text('''
+        file1.write_text("""
 from pydantic import BaseModel
 
 class Model1(BaseModel):
     name: str
-''')
+""")
 
         file2 = temp_dir / "models2.py"
-        file2.write_text('''
+        file2.write_text("""
 from pydantic import BaseModel
 
 class Model2(BaseModel):
     value: int
-''')
+""")
 
         output_dir = temp_dir / "output"
         output_dir.mkdir()
 
-        result = runner.invoke(
-            app,
-            [str(file1), str(file2), "-o", str(output_dir)]
-        )
+        result = runner.invoke(app, [str(file1), str(file2), "-o", str(output_dir)])
 
         assert result.exit_code == 0
         assert (output_dir / "Model1.schema.json").exists()
@@ -114,10 +99,7 @@ class Model2(BaseModel):
 
     def test_empty_module(self, empty_model_file, temp_dir):
         """Test processing a module with no Pydantic models."""
-        result = runner.invoke(
-            app,
-            [str(empty_model_file), "-o", str(temp_dir)]
-        )
+        result = runner.invoke(app, [str(empty_model_file), "-o", str(temp_dir)])
 
         # CLI warns about no models found
         assert "No Pydantic models found" in result.stdout or result.exit_code == 0
