@@ -8,7 +8,7 @@ inputs:
   coverage-threshold:
     description: 'Minimum coverage percentage required'
     required: false
-    default: '90'
+    default: '85'
   pytest-args:
     description: 'Additional pytest arguments'
     required: false

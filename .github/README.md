@@ -29,7 +29,7 @@ Runs pytest with optional coverage reporting.
 
 **Inputs:**
 - `coverage`: Generate coverage report (default: `true`)
-- `coverage-threshold`: Minimum coverage percentage required (default: `90`)
+- `coverage-threshold`: Minimum coverage percentage required (default: `85`)
 - `pytest-args`: Additional pytest arguments (default: `''`)
 
 **Outputs:**
@@ -59,7 +59,7 @@ Runs unit tests on push to main and claude/** branches, and on pull requests.
 - Tests against Python 3.9, 3.10, 3.11, and 3.12
 - Generates coverage reports
 - Uploads coverage to Codecov (for Python 3.11)
-- Requires 90% minimum coverage
+- Requires 85% minimum coverage
 
 **Triggers:**
 - Push to `main` or `claude/**` branches

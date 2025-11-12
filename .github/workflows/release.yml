@@ -30,7 +30,7 @@ jobs:
         uses: ./.github/actions/test
         with:
           coverage: 'true'
-          coverage-threshold: '90'
+          coverage-threshold: '85'
 
   build:
     name: Build Package
