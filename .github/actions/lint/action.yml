@@ -22,16 +22,16 @@ runs:
       run: |
         if [ "${{ inputs.auto-fix }}" = "true" ]; then
           echo "Running ruff check with auto-fix..."
-          ruff check --fix ${{ inputs.paths }}
+          uv run ruff check --fix ${{ inputs.paths }}
         else
           echo "Running ruff check..."
           if [ "${{ inputs.fail-on-error }}" = "true" ]; then
-            ruff check ${{ inputs.paths }}
+            uv run ruff check ${{ inputs.paths }}
           else
-            ruff check ${{ inputs.paths }} || true
+            uv run ruff check ${{ inputs.paths }} || true
           fi
         fi
 
     - name: Show ruff version
       shell: bash
-      run: ruff --version
+      run: uv run ruff --version

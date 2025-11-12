@@ -18,10 +18,10 @@ runs:
       run: |
         if [ "${{ inputs.check-only }}" = "true" ]; then
           echo "Checking code formatting..."
-          ruff format --check ${{ inputs.paths }}
+          uv run ruff format --check ${{ inputs.paths }}
         else
           echo "Formatting code..."
-          ruff format ${{ inputs.paths }}
+          uv run ruff format ${{ inputs.paths }}
         fi
 
     - name: Show formatting status

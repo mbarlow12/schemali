@@ -27,11 +27,11 @@ runs:
       shell: bash
       run: |
         if [ "${{ inputs.coverage }}" = "true" ]; then
-          pytest --cov=schemali --cov-report=term-missing --cov-report=xml --cov-report=html --cov-fail-under=${{ inputs.coverage-threshold }} ${{ inputs.pytest-args }}
-          coverage_pct=$(coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          uv run pytest --cov=schemali --cov-report=term-missing --cov-report=xml --cov-report=html --cov-fail-under=${{ inputs.coverage-threshold }} ${{ inputs.pytest-args }}
+          coverage_pct=$(uv run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
           echo "coverage=$coverage_pct" >> $GITHUB_OUTPUT
         else
-          pytest ${{ inputs.pytest-args }}
+          uv run pytest ${{ inputs.pytest-args }}
         fi
 
     - name: Upload coverage reports
