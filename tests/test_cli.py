@@ -1,8 +1,6 @@
 """Tests for CLI module."""
 
-from pathlib import Path
 
-import pytest
 from typer.testing import CliRunner
 
 from schemali.cli import app

@@ -120,7 +120,7 @@ class TestSchemaWriter:
     def test_process_module_verbose(self, sample_model_file, temp_dir, capsys):
         """Test processing module with verbose output."""
         writer = SchemaWriter(output_dir=temp_dir)
-        results = writer.process_module(sample_model_file, verbose=True)
+        _ = writer.process_module(sample_model_file, verbose=True)
 
         captured = capsys.readouterr()
         assert "Loading module" in captured.out
