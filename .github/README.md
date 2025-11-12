@@ -31,6 +31,7 @@ Runs pytest with optional coverage reporting.
 - `coverage`: Generate coverage report (default: `true`)
 - `coverage-threshold`: Minimum coverage percentage required (default: `85`)
 - `pytest-args`: Additional pytest arguments (default: `''`)
+- `artifact-name`: Name for the coverage artifact, use unique names for parallel jobs (default: `coverage-report`)
 
 **Outputs:**
 - `coverage-percentage`: Test coverage percentage

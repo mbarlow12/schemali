@@ -13,6 +13,10 @@ inputs:
     description: 'Additional pytest arguments'
     required: false
     default: ''
+  artifact-name:
+    description: 'Name for the coverage artifact (use unique names for parallel jobs)'
+    required: false
+    default: 'coverage-report'
 
 outputs:
   coverage-percentage:
@@ -38,7 +42,7 @@ runs:
       if: inputs.coverage == 'true'
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-report
+        name: ${{ inputs.artifact-name }}
         path: |
           htmlcov/
           coverage.xml

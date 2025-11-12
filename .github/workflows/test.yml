@@ -33,6 +33,7 @@ jobs:
         with:
           coverage: 'true'
           coverage-threshold: '85'
+          artifact-name: coverage-report-py${{ matrix.python-version }}
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.11'
