@@ -24,7 +24,7 @@ jobs:
         uses: ./.github/actions/setup-uv
         with:
           python-version: '3.11'
-          install-dev: 'true'
+          extras: 'dev'
 
       - name: Run ruff linting
         uses: ./.github/actions/lint
@@ -44,7 +44,7 @@ jobs:
         uses: ./.github/actions/setup-uv
         with:
           python-version: '3.11'
-          install-dev: 'true'
+          extras: 'dev'
 
       - name: Check code formatting
         uses: ./.github/actions/format
@@ -68,7 +68,7 @@ jobs:
         uses: ./.github/actions/setup-uv
         with:
           python-version: '3.11'
-          install-dev: 'true'
+          extras: 'dev'
 
       - name: Auto-fix linting issues
         uses: ./.github/actions/lint

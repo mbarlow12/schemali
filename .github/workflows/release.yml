@@ -24,7 +24,7 @@ jobs:
         uses: ./.github/actions/setup-uv
         with:
           python-version: '3.11'
-          install-dev: 'true'
+          extras: 'dev'
 
       - name: Run unit tests
         uses: ./.github/actions/test
@@ -44,7 +44,7 @@ jobs:
         uses: ./.github/actions/setup-uv
         with:
           python-version: '3.11'
-          install-dev: 'true'
+          extras: ''
 
       - name: Build package
         uses: ./.github/actions/build

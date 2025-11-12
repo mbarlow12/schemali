@@ -26,7 +26,7 @@ jobs:
         uses: ./.github/actions/setup-uv
         with:
           python-version: ${{ matrix.python-version }}
-          install-dev: 'true'
+          extras: 'dev'
 
       - name: Run unit tests
         uses: ./.github/actions/test

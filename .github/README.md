@@ -11,7 +11,8 @@ Sets up the Python environment using uv for fast, reliable dependency management
 
 **Inputs:**
 - `python-version`: Python version to use (default: `3.11`)
-- `install-dev`: Install dev dependencies (default: `true`)
+- `extras`: Comma-separated list of optional dependency groups to install (default: `dev`)
+  - Examples: `dev`, `docs`, `dev,docs`, or `` (empty for no extras)
 - `cache-key`: Custom cache key suffix (default: `default`)
 
 ### build
