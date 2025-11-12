@@ -1,0 +1,28 @@
+name: 'Build Project'
+description: 'Build Python package using uv'
+inputs:
+  output-dir:
+    description: 'Output directory for build artifacts'
+    required: false
+    default: 'dist'
+
+outputs:
+  artifact-path:
+    description: 'Path to build artifacts'
+    value: ${{ steps.build.outputs.artifact-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build package
+      id: build
+      shell: bash
+      run: |
+        uv build --out-dir ${{ inputs.output-dir }}
+        echo "artifact-path=${{ inputs.output-dir }}" >> $GITHUB_OUTPUT
+
+    - name: List build artifacts
+      shell: bash
+      run: |
+        echo "Build artifacts:"
+        ls -lh ${{ inputs.output-dir }}/

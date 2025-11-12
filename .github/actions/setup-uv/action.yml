@@ -1,0 +1,52 @@
+name: 'Setup Project with uv'
+description: 'Install uv and set up Python project with dependencies'
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.11'
+  install-dev:
+    description: 'Install dev dependencies'
+    required: false
+    default: 'true'
+  cache-key:
+    description: 'Custom cache key suffix'
+    required: false
+    default: 'default'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+
+    - name: Cache uv dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/uv
+          .venv
+        key: uv-${{ runner.os }}-py${{ inputs.python-version }}-${{ inputs.cache-key }}-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          uv-${{ runner.os }}-py${{ inputs.python-version }}-${{ inputs.cache-key }}-
+          uv-${{ runner.os }}-py${{ inputs.python-version }}-
+
+    - name: Create virtual environment
+      shell: bash
+      run: uv venv
+
+    - name: Install package with dependencies
+      shell: bash
+      run: |
+        if [ "${{ inputs.install-dev }}" = "true" ]; then
+          uv pip install -e ".[dev]"
+        else
+          uv pip install -e .
+        fi

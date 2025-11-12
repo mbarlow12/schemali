@@ -1,0 +1,45 @@
+name: 'Run Unit Tests'
+description: 'Run pytest with coverage reporting'
+inputs:
+  coverage:
+    description: 'Generate coverage report'
+    required: false
+    default: 'true'
+  coverage-threshold:
+    description: 'Minimum coverage percentage required'
+    required: false
+    default: '90'
+  pytest-args:
+    description: 'Additional pytest arguments'
+    required: false
+    default: ''
+
+outputs:
+  coverage-percentage:
+    description: 'Test coverage percentage'
+    value: ${{ steps.test.outputs.coverage }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run tests
+      id: test
+      shell: bash
+      run: |
+        if [ "${{ inputs.coverage }}" = "true" ]; then
+          pytest --cov=schemali --cov-report=term-missing --cov-report=xml --cov-report=html --cov-fail-under=${{ inputs.coverage-threshold }} ${{ inputs.pytest-args }}
+          coverage_pct=$(coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          echo "coverage=$coverage_pct" >> $GITHUB_OUTPUT
+        else
+          pytest ${{ inputs.pytest-args }}
+        fi
+
+    - name: Upload coverage reports
+      if: inputs.coverage == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: |
+          htmlcov/
+          coverage.xml
+        retention-days: 30
