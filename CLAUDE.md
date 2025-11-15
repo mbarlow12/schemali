@@ -39,8 +39,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# Install package in development mode with dev dependencies
-uv pip install -e ".[dev]"
+# Install package in development mode with all dependencies
+uv sync --all-groups
+
+# Or install with specific dependency groups
+uv sync --group dev
 ```
 
 ### Running Tests
@@ -170,13 +173,18 @@ def test_feature(sample_model_file, temp_dir):
 
 ```bash
 # Add runtime dependency
-uv pip install <package>
-# Then add to pyproject.toml dependencies
+uv add <package>
 
-# Add dev dependency
-uv pip install <package>
-# Then add to pyproject.toml [project.optional-dependencies] dev
+# Add dev dependency to dev group
+uv add --group dev <package>
+
+# Add docs dependency to docs group
+uv add --group docs <package>
 ```
+
+All dependencies are managed in `pyproject.toml`:
+- Runtime dependencies: `[project.dependencies]`
+- Development dependencies: `[dependency-groups]` (following PEP 735)
 
 ### Adding a New CLI Command
 
@@ -222,14 +230,14 @@ pytest -vv
 
 ```bash
 # Reinstall in development mode
-uv pip install -e ".[dev]"
+uv sync --all-groups
 ```
 
 ### Coverage Not Working
 
 ```bash
-# Ensure pytest-cov is installed
-uv pip install pytest-cov
+# Ensure dev dependencies (including pytest-cov) are installed
+uv sync --group dev
 
 # Run with explicit coverage
 pytest --cov=schemali --cov-report=term-missing
