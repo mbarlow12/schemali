@@ -54,6 +54,16 @@ def main(
         "--verbose",
         help="Enable verbose output",
     ),
+    single_file: bool = typer.Option(
+        False,
+        "--single-file",
+        help="Generate a single consolidated schema file using JSON Schema 2020-12 $defs",
+    ),
+    single_file_name: Optional[str] = typer.Option(
+        None,
+        "--single-file-name",
+        help="Name of the single output file (default: schemas.json)",
+    ),
     config_file: Optional[Path] = typer.Option(
         None,
         "-c",
@@ -86,6 +96,12 @@ def main(
         # Custom indentation and verbose output
         schemali models.py --indent 4 -v
 
+        # Generate a single consolidated schema file (JSON Schema 2020-12)
+        schemali models.py --single-file
+
+        # Single file with custom name
+        schemali models.py --single-file --single-file-name all-schemas.json
+
         # Use a configuration file
         schemali models.py -c config.toml
     """
@@ -100,6 +116,10 @@ def main(
             config.indent = indent
         if verbose:
             config.verbose = verbose
+        if single_file:
+            config.single_file = single_file
+        if single_file_name is not None:
+            config.single_file_name = single_file_name
 
         # Validate modules are Python files
         for module_path in modules:
@@ -119,20 +139,57 @@ def main(
         # Track results
         total_models = 0
         all_results = {}
+        all_models = []
 
-        # Process each module
+        # Process each module to discover models
         for module_path in modules:
             if config.verbose:
                 console.print(f"\n[bold]Processing module:[/bold] {module_path}")
 
-            results = writer.process_module(
-                module_path,
+            # Load the module
+            module = writer.load_module_from_path(module_path)
+
+            # Discover Pydantic models
+            models = writer.discover_pydantic_models(module)
+            all_models.extend(models)
+
+            if config.verbose:
+                model_names = [m.__name__ for m in models]
+                console.print(f"Found {len(models)} Pydantic model(s): {model_names}")
+
+        total_models = len(all_models)
+
+        # Generate schemas based on mode
+        if config.single_file:
+            # Single consolidated schema file
+            output_path = config.output_dir or Path.cwd()
+            if config.output_dir:
+                output_path = Path(config.output_dir)
+            else:
+                output_path = Path.cwd()
+
+            schema_file_path = output_path / config.single_file_name
+
+            result_path = writer.write_consolidated_schema(
+                all_models,
+                output_path=schema_file_path,
                 indent=config.indent,
-                verbose=config.verbose,
             )
 
-            total_models += len(results)
-            all_results.update(results)
+            if config.verbose:
+                console.print(
+                    f"\n[bold green]✓ Generated consolidated schema:[/bold green] {result_path}"
+                )
+
+            all_results["__consolidated__"] = result_path
+        else:
+            # Individual schema files for each model
+            for model in all_models:
+                schema_path = writer.write_schema(model, indent=config.indent)
+                all_results[model.__name__] = schema_path
+
+                if config.verbose:
+                    console.print(f"  ✓ {model.__name__} -> {schema_path}")
 
         # Display summary
         if total_models == 0:
@@ -140,19 +197,33 @@ def main(
             raise typer.Exit(0)
 
         if not config.verbose:
-            # Create a nice table for non-verbose output
-            table = Table(title=f"\n✓ Successfully generated {total_models} schema(s)")
-            table.add_column("Model", style="cyan", no_wrap=True)
-            table.add_column("Schema File", style="green")
+            if config.single_file:
+                # Single file output
+                console.print(
+                    f"\n[bold green]✓ Successfully generated consolidated schema[/bold green]\n"
+                    f"  Models: {total_models}\n"
+                    f"  File: {all_results['__consolidated__']}"
+                )
+            else:
+                # Create a nice table for non-verbose output
+                table = Table(title=f"\n✓ Successfully generated {total_models} schema(s)")
+                table.add_column("Model", style="cyan", no_wrap=True)
+                table.add_column("Schema File", style="green")
 
-            for model_name, schema_path in all_results.items():
-                table.add_row(model_name, str(schema_path))
+                for model_name, schema_path in all_results.items():
+                    table.add_row(model_name, str(schema_path))
 
-            console.print(table)
+                console.print(table)
         else:
-            console.print(
-                f"\n[bold green]✓ Complete![/bold green] Generated {total_models} schemas"
-            )
+            if config.single_file:
+                console.print(
+                    f"\n[bold green]✓ Complete![/bold green] "
+                    f"Generated consolidated schema with {total_models} models"
+                )
+            else:
+                console.print(
+                    f"\n[bold green]✓ Complete![/bold green] Generated {total_models} schemas"
+                )
 
     except KeyboardInterrupt:
         console.print("\n[yellow]Interrupted by user[/yellow]")

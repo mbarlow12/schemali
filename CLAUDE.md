@@ -112,6 +112,8 @@ indent = 4
 verbose = false
 schema_suffix = ".schema.json"
 overwrite = true
+single_file = false
+single_file_name = "schemas.json"
 ```
 
 ### CLI Framework
@@ -130,6 +132,42 @@ The `SchemaWriter` class handles:
 2. Discovery of Pydantic `BaseModel` subclasses
 3. JSON schema generation using Pydantic's built-in `model_json_schema()`
 4. File output with configurable formatting
+
+#### Single-File Mode
+
+The tool supports generating a single consolidated schema file that conforms to JSON Schema 2020-12 specification:
+
+- Uses `$defs` to define all model schemas
+- Uses `$ref` constructs for referencing definitions
+- Includes `$schema` pointing to `https://json-schema.org/draft/2020-12/schema`
+- Configurable via `--single-file` CLI option or `single_file` config setting
+- Custom filename via `--single-file-name` or `single_file_name` config setting
+
+Example output structure:
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "file:///path/to/schemas.json",
+  "title": "Consolidated Pydantic Models Schema",
+  "description": "JSON Schema definitions for all Pydantic models",
+  "$defs": {
+    "User": { ... },
+    "Product": { ... }
+  }
+}
+```
+
+Usage:
+```bash
+# Generate single consolidated schema
+schemali models.py --single-file
+
+# With custom filename
+schemali models.py --single-file --single-file-name all-schemas.json
+
+# Multiple modules into single file
+schemali user.py product.py order.py --single-file
+```
 
 ## Testing Strategy
 

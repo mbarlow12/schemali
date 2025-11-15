@@ -19,6 +19,8 @@ class TestSchemaliConfig:
         assert config.verbose is False
         assert config.schema_suffix == ".schema.json"
         assert config.overwrite is True
+        assert config.single_file is False
+        assert config.single_file_name == "schemas.json"
 
     def test_config_with_custom_values(self):
         """Test configuration with custom values."""
@@ -73,3 +75,23 @@ class TestSchemaliConfig:
 
         config = SchemaliConfig(schema_suffix="-schema.json")
         assert config.schema_suffix == "-schema.json"
+
+    def test_single_file_config(self):
+        """Test single file configuration options."""
+        config = SchemaliConfig(single_file=True)
+        assert config.single_file is True
+        assert config.single_file_name == "schemas.json"
+
+        config = SchemaliConfig(single_file=True, single_file_name="all-models.json")
+        assert config.single_file is True
+        assert config.single_file_name == "all-models.json"
+
+    def test_single_file_from_env_vars(self, monkeypatch):
+        """Test loading single file config from environment variables."""
+        monkeypatch.setenv("SCHEMALI_SINGLE_FILE", "true")
+        monkeypatch.setenv("SCHEMALI_SINGLE_FILE_NAME", "custom.json")
+
+        config = SchemaliConfig()
+
+        assert config.single_file is True
+        assert config.single_file_name == "custom.json"

@@ -128,3 +128,86 @@ class TestSchemaWriter:
         assert "Found 2 Pydantic model(s)" in captured.out
         assert "User" in captured.out
         assert "Product" in captured.out
+
+    def test_write_consolidated_schema(self, sample_model_file, temp_dir):
+        """Test writing a consolidated schema file with all models."""
+        writer = SchemaWriter(output_dir=temp_dir)
+        module = writer.load_module_from_path(sample_model_file)
+        models = writer.discover_pydantic_models(module)
+
+        schema_path = writer.write_consolidated_schema(models)
+
+        assert schema_path.exists()
+        assert schema_path.name == "schemas.json"
+
+        # Verify schema content
+        with open(schema_path) as f:
+            schema = json.load(f)
+
+        # Check JSON Schema 2020-12 format
+        assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+        assert "$defs" in schema
+        assert "title" in schema
+        assert "description" in schema
+
+        # Check that all models are in $defs
+        assert "User" in schema["$defs"]
+        assert "Product" in schema["$defs"]
+
+        # Verify model schemas in $defs
+        user_schema = schema["$defs"]["User"]
+        assert user_schema["title"] == "User"
+        assert "properties" in user_schema
+        assert "id" in user_schema["properties"]
+        assert "name" in user_schema["properties"]
+
+        product_schema = schema["$defs"]["Product"]
+        assert product_schema["title"] == "Product"
+        assert "properties" in product_schema
+        assert "title" in product_schema["properties"]
+        assert "price" in product_schema["properties"]
+
+    def test_write_consolidated_schema_custom_path(self, sample_model_file, temp_dir):
+        """Test writing consolidated schema with custom path."""
+        writer = SchemaWriter(output_dir=temp_dir)
+        module = writer.load_module_from_path(sample_model_file)
+        models = writer.discover_pydantic_models(module)
+
+        custom_path = temp_dir / "custom_schemas.json"
+        schema_path = writer.write_consolidated_schema(models, output_path=custom_path)
+
+        assert schema_path == custom_path
+        assert schema_path.exists()
+
+        with open(schema_path) as f:
+            schema = json.load(f)
+
+        assert "$defs" in schema
+        assert len(schema["$defs"]) == 2
+
+    def test_write_consolidated_schema_custom_indent(self, sample_model_file, temp_dir):
+        """Test writing consolidated schema with custom indentation."""
+        writer = SchemaWriter(output_dir=temp_dir)
+        module = writer.load_module_from_path(sample_model_file)
+        models = writer.discover_pydantic_models(module)
+
+        schema_path = writer.write_consolidated_schema(models, indent=4)
+
+        content = schema_path.read_text()
+        # Check that indentation is 4 spaces
+        assert '    "$schema"' in content
+        assert '    "$defs"' in content
+
+    def test_write_consolidated_schema_empty_models(self, temp_dir):
+        """Test writing consolidated schema with no models."""
+        writer = SchemaWriter(output_dir=temp_dir)
+        schema_path = writer.write_consolidated_schema([])
+
+        assert schema_path.exists()
+
+        with open(schema_path) as f:
+            schema = json.load(f)
+
+        assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+        assert "$defs" in schema
+        assert len(schema["$defs"]) == 0
