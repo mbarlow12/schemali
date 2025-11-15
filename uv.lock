@@ -2036,7 +2036,7 @@ dependencies = [
     { name = "typer" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "pytest", version = "8.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "pytest", version = "8.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
@@ -2058,20 +2058,25 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "mkdocs", marker = "extra == 'docs'", specifier = ">=1.5.0" },
-    { name = "mkdocs-autorefs", marker = "extra == 'docs'", specifier = ">=0.5.0" },
-    { name = "mkdocs-material", marker = "extra == 'docs'", specifier = ">=9.0.0" },
-    { name = "mkdocstrings", extras = ["python"], marker = "extra == 'docs'", specifier = ">=0.24.0" },
     { name = "pydantic", specifier = ">=2.0.0" },
     { name = "pydantic-settings", specifier = ">=2.0.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.0.0" },
-    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.0.0" },
     { name = "rich", specifier = ">=13.0.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
     { name = "typer", specifier = ">=0.9.0" },
 ]
-provides-extras = ["dev", "docs"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=7.0.0" },
+    { name = "pytest-cov", specifier = ">=4.0.0" },
+    { name = "pytest-mock", specifier = ">=3.0.0" },
+    { name = "ruff", specifier = ">=0.1.0" },
+]
+docs = [
+    { name = "mkdocs", specifier = ">=1.5.0" },
+    { name = "mkdocs-autorefs", specifier = ">=0.5.0" },
+    { name = "mkdocs-material", specifier = ">=9.0.0" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.24.0" },
+]
 
 [[package]]
 name = "shellingham"
