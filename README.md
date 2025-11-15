@@ -360,7 +360,15 @@ schemali --help
 
 ## Contributing
 
-Contributions are welcome! Please see [CLAUDE.md](CLAUDE.md) for developer documentation.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+
+- Development setup and workflow
+- Code style guidelines
+- Testing requirements
+- Pull request process
+- CI/CD workflows
+
+Quick start for contributors:
 
 1. Fork the repository
 2. Create a feature branch
@@ -368,6 +376,8 @@ Contributions are welcome! Please see [CLAUDE.md](CLAUDE.md) for developer docum
 4. Ensure all tests pass: `pytest`
 5. Run linter: `ruff check .`
 6. Submit a pull request
+
+For developer documentation, see [CLAUDE.md](CLAUDE.md).
 
 ## License
 
