@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 
 class Address(BaseModel):
@@ -21,7 +21,7 @@ class User(BaseModel):
 
     id: int = Field(..., description="Unique user identifier")
     username: str = Field(..., min_length=3, max_length=50)
-    email: EmailStr
+    email: str | None = None
     full_name: Optional[str] = None
     age: Optional[int] = Field(None, ge=0, le=150)
     is_active: bool = True
