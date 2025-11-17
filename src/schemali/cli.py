@@ -55,7 +55,7 @@ def main(
         help="Enable verbose output",
     ),
     single_file: bool = typer.Option(
-        False,
+        True,
         "--single-file",
         help="Generate a single consolidated schema file using JSON Schema 2020-12 $defs",
     ),
@@ -166,7 +166,7 @@ def main(
             if config.output_dir:
                 output_path = Path(config.output_dir)
             else:
-                output_path = Path.cwd()
+                output_path = Path.cwd() / "schemas"
 
             schema_file_path = output_path / config.single_file_name
 
@@ -174,6 +174,7 @@ def main(
                 all_models,
                 output_path=schema_file_path,
                 indent=config.indent,
+                base_uri=config.base_uri,
             )
 
             if config.verbose:

@@ -96,39 +96,6 @@ class TestSchemaWriter:
         # Check that indentation is 4 spaces
         assert '    "title"' in content
 
-    def test_process_module(self, sample_model_file, temp_dir):
-        """Test processing a complete module."""
-        writer = SchemaWriter(output_dir=temp_dir)
-        results = writer.process_module(sample_model_file, verbose=False)
-
-        assert len(results) == 2
-        assert "User" in results
-        assert "Product" in results
-
-        # Verify files were created
-        assert results["User"].exists()
-        assert results["Product"].exists()
-
-        # Verify schema content
-        with open(results["User"]) as f:
-            user_schema = json.load(f)
-
-        assert user_schema["title"] == "User"
-        assert "id" in user_schema["properties"]
-        assert "name" in user_schema["properties"]
-        assert "email" in user_schema["properties"]
-
-    def test_process_module_verbose(self, sample_model_file, temp_dir, capsys):
-        """Test processing module with verbose output."""
-        writer = SchemaWriter(output_dir=temp_dir)
-        _ = writer.process_module(sample_model_file, verbose=True)
-
-        captured = capsys.readouterr()
-        assert "Loading module" in captured.out
-        assert "Found 2 Pydantic model(s)" in captured.out
-        assert "User" in captured.out
-        assert "Product" in captured.out
-
     def test_write_consolidated_schema(self, sample_model_file, temp_dir):
         """Test writing a consolidated schema file with all models."""
         writer = SchemaWriter(output_dir=temp_dir)

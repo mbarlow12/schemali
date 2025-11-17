@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Optional
 
-from pydantic import Field
+from pydantic import AnyUrl, Field
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -54,8 +54,13 @@ class SchemaliConfig(BaseSettings):
     )
 
     single_file_name: str = Field(
-        default="schemas.json",
+        default="schemas/schemali.schema.json",
         description="Name of the single output file when single_file is enabled",
+    )
+
+    base_uri: AnyUrl = Field(
+        default="https://schemali.io",
+        description="The URL for the top-level `$id` field in the schema.",
     )
 
     @classmethod
