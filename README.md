@@ -7,7 +7,8 @@ A modern CLI tool for generating JSON schemas from Pydantic models.
 - 🚀 Load one or more Python modules containing Pydantic models
 - 🔍 Automatically discover all Pydantic models in each module
 - 📋 Generate JSON schemas compliant with JSON Schema specification
-- 💾 Write schemas to individual files
+- 💾 Write schemas to individual files or a single consolidated file
+- 📦 Single-file mode with JSON Schema 2020-12 `$defs` and `$ref` support
 - 🎨 Beautiful terminal output with colors and tables
 - ⚙️ Flexible configuration via TOML files, environment variables, or CLI arguments
 - 🧪 Comprehensive test coverage with pytest
@@ -55,6 +56,9 @@ schemali user.py product.py order.py
 
 # Specify output directory
 schemali models.py -o schemas/
+
+# Generate single consolidated schema (JSON Schema 2020-12)
+schemali models.py --single-file
 
 # Use verbose output
 schemali models.py -v
@@ -108,6 +112,51 @@ schemali models.py -v
 schemali models.py --verbose
 ```
 
+### Single Consolidated Schema File
+
+Generate a single JSON Schema 2020-12 compliant file with all models using `$defs`:
+
+```bash
+# Generate single consolidated schema
+schemali models.py --single-file
+
+# With custom filename
+schemali models.py --single-file --single-file-name all-schemas.json
+
+# Multiple modules into one consolidated file
+schemali user.py product.py order.py --single-file
+```
+
+This creates a schema file like:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "file:///path/to/schemas.json",
+  "title": "Consolidated Pydantic Models Schema",
+  "description": "JSON Schema definitions for all Pydantic models",
+  "$defs": {
+    "User": { /* User schema */ },
+    "Product": { /* Product schema */ },
+    "Order": { /* Order schema */ }
+  }
+}
+```
+
+You can reference models using `$ref`:
+```json
+{
+  "type": "object",
+  "properties": {
+    "user": { "$ref": "#/$defs/User" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Product" }
+    }
+  }
+}
+```
+
 ### Using a Configuration File
 
 Create a `schemali.toml` configuration file:
@@ -119,6 +168,8 @@ indent = 4
 verbose = false
 schema_suffix = ".schema.json"
 overwrite = true
+single_file = false
+single_file_name = "schemas.json"
 ```
 
 Then run:
@@ -165,6 +216,8 @@ Schemali uses a flexible configuration system powered by **pydantic-settings**. 
 | `verbose` | bool | false | Enable verbose output |
 | `schema_suffix` | str | `.schema.json` | Suffix for generated schema files |
 | `overwrite` | bool | true | Whether to overwrite existing files |
+| `single_file` | bool | false | Generate single consolidated schema file |
+| `single_file_name` | str | `schemas.json` | Name of single output file |
 
 ### Configuration File Locations
 

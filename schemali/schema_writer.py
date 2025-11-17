@@ -108,6 +108,54 @@ class SchemaWriter:
 
         return output_path
 
+    def write_consolidated_schema(
+        self,
+        models: List[Type[BaseModel]],
+        output_path: Path = None,
+        indent: int = 2,
+    ) -> Path:
+        """
+        Write all Pydantic models' schemas to a single file using JSON Schema 2020-12 format.
+
+        This creates a consolidated schema file that uses $defs to define all models
+        and conforms to the JSON Schema 2020-12 specification.
+
+        Args:
+            models: List of Pydantic model classes.
+            output_path: Path for the consolidated schema file.
+            indent: Number of spaces for JSON indentation.
+
+        Returns:
+            Path to the written schema file.
+        """
+        if output_path is None:
+            output_path = self.output_dir / "schemas.json"
+
+        # Build the consolidated schema structure
+        consolidated_schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": output_path.as_uri(),
+            "title": "Consolidated Pydantic Models Schema",
+            "description": "JSON Schema definitions for all Pydantic models",
+            "$defs": {},
+        }
+
+        # Generate schema for each model and add to $defs
+        for model in models:
+            schema = model.model_json_schema(mode="serialization")
+
+            # Remove the top-level $schema if present (we have one at the root)
+            schema.pop("$schema", None)
+
+            # Add to $defs with the model name as the key
+            consolidated_schema["$defs"][model.__name__] = schema
+
+        # Write to file
+        with open(output_path, "w") as f:
+            json.dump(consolidated_schema, f, indent=indent)
+
+        return output_path
+
     def process_module(
         self, module_path: Path, indent: int = 2, verbose: bool = False
     ) -> Dict[str, Path]:

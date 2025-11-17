@@ -1,21 +1,24 @@
 """Example Pydantic models for testing."""
 
-from typing import Optional, List
 from datetime import datetime
+from typing import List, Optional
+
 from pydantic import BaseModel, EmailStr, Field
 
 
 class Address(BaseModel):
     """User address information."""
+
     street: str
     city: str
     state: str
-    zip_code: str = Field(..., pattern=r'^\d{5}(-\d{4})?$')
+    zip_code: str = Field(..., pattern=r"^\d{5}(-\d{4})?$")
     country: str = "USA"
 
 
 class User(BaseModel):
     """User model with various field types."""
+
     id: int = Field(..., description="Unique user identifier")
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
@@ -29,6 +32,7 @@ class User(BaseModel):
 
 class Product(BaseModel):
     """Product model."""
+
     id: int
     name: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None

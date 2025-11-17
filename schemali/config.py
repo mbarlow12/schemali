@@ -42,6 +42,16 @@ class SchemaliConfig(BaseSettings):
 
     overwrite: bool = Field(default=True, description="Whether to overwrite existing schema files")
 
+    # Single-file output configuration
+    single_file: bool = Field(
+        default=False, description="Generate a single consolidated schema file using $defs"
+    )
+
+    single_file_name: str = Field(
+        default="schemas.json",
+        description="Name of the single output file when single_file is enabled",
+    )
+
     @classmethod
     def load_config(cls, config_file: Optional[Path] = None) -> "SchemaliConfig":
         """Load configuration from a specific file or default locations.
