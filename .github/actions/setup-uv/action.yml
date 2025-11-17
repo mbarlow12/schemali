@@ -4,7 +4,7 @@ inputs:
   python-version:
     description: 'Python version to use'
     required: false
-    default: '3.11'
+    default: '3.12'
   extras:
     description: 'Comma-separated list of optional dependency groups to install (e.g., "dev", "docs", "dev,docs")'
     required: false
