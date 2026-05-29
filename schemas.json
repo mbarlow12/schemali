@@ -1,0 +1,181 @@
+{
+  "$defs": {
+    "Address": {
+      "description": "User address information.",
+      "properties": {
+        "street": {
+          "title": "Street",
+          "type": "string"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "title": "State",
+          "type": "string"
+        },
+        "zip_code": {
+          "pattern": "^\\d{5}(-\\d{4})?$",
+          "title": "Zip Code",
+          "type": "string"
+        },
+        "country": {
+          "default": "USA",
+          "title": "Country",
+          "type": "string"
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "state",
+        "zip_code"
+      ],
+      "title": "Address",
+      "type": "object"
+    },
+    "Product": {
+      "description": "Product model.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "price": {
+          "exclusiveMinimum": 0,
+          "title": "Price",
+          "type": "number"
+        },
+        "in_stock": {
+          "default": true,
+          "title": "In Stock",
+          "type": "boolean"
+        },
+        "categories": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Categories",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "price"
+      ],
+      "title": "Product",
+      "type": "object"
+    },
+    "User": {
+      "description": "User model with various field types.",
+      "properties": {
+        "id": {
+          "description": "Unique user identifier",
+          "title": "Id",
+          "type": "integer"
+        },
+        "username": {
+          "maxLength": 50,
+          "minLength": 3,
+          "title": "Username",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "age": {
+          "anyOf": [
+            {
+              "maximum": 150,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Age"
+        },
+        "is_active": {
+          "default": true,
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "created_at"
+      ],
+      "title": "User",
+      "type": "object"
+    }
+  },
+  "title": "schemali!!!"
+}

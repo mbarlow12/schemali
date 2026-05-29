@@ -22,7 +22,7 @@ class User(BaseModel):
     id: int = Field(..., description="Unique user identifier")
     username: str = Field(..., min_length=3, max_length=50)
     email: str | None = None
-    full_name: Optional[str] = None
+    full_name: str | None = None
     age: Optional[int] = Field(None, ge=0, le=150)
     is_active: bool = True
     created_at: datetime
